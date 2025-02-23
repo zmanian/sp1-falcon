@@ -20,8 +20,8 @@ const MESSAGE_TO_SIGN: &[u8] = b"Hello, SP1";
 pub const FALCON_ELF: &[u8] = include_elf!("falcon-program");
 
 use fn_dsa::{
-    sign_key_size, signature_size, KeyPairGenerator, KeyPairGeneratorStandard, SigningKeyStandard,
-    DOMAIN_NONE, FN_DSA_LOGN_512, HASH_ID_RAW,
+    sign_key_size, signature_size, KeyPairGenerator, KeyPairGeneratorStandard, SigningKey,
+    SigningKeyStandard, DOMAIN_NONE, FN_DSA_LOGN_512, HASH_ID_RAW,
 };
 use rand_core::OsRng;
 
@@ -40,19 +40,19 @@ fn generate_keys() -> (Vec<u8>, Vec<u8>) {
     (sign_key, vrfy_key)
 }
 
-// fn sign_message(sign_key: &[u8], message: &[u8]) -> Option<Vec<u8>> {
-//     // Decode the signing key.
-//     let sk = SigningKeyStandard::from(sign_key).or_else(|| {
-//         eprintln!("Error: Could not decode signing key");
-//         None
-//     })?;
-//     let logn = sk.get_logn();
-//     // Allocate buffer for the signature.
-//     let mut sig = vec![0u8; signature_size(logn)];
-//     // Produce the signature.
-//     sk.sign(&mut OsRng, &DOMAIN_NONE, &HASH_ID_RAW, message, &mut sig);
-//     Some(sig)
-// }
+fn sign_message(sign_key: &[u8], message: &[u8]) -> Option<Vec<u8>> {
+    // Decode the signing key.
+    let mut sk = SigningKeyStandard::decode(sign_key).or_else(|| {
+        eprintln!("Error: Could not decode signing key");
+        None
+    })?;
+    let logn = sk.get_logn();
+    // Allocate buffer for the signature.
+    let mut sig = vec![0u8; signature_size(logn)];
+    // Produce the signature.
+    sk.sign(&mut OsRng, &DOMAIN_NONE, &HASH_ID_RAW, message, &mut sig);
+    Some(sig)
+}
 
 /// The arguments for the command.
 #[derive(Parser, Debug)]
