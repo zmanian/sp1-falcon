@@ -17,8 +17,11 @@ pub fn main() {
     // Behind the scenes, this compiles down to a custom system call which handles reading inputs
     // from the prover.
     let vrfy_key = sp1_zkvm::io::read_vec();
+
     let signature = sp1_zkvm::io::read_vec();
+
     let msg = sp1_zkvm::io::read_vec();
+
     // Compute the n'th fibonacci number using a function from the workspace lib crate.
     let verified = verify_signature(&vrfy_key, &signature, &msg);
     // Encode the public values of the program.

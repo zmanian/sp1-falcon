@@ -63,9 +63,6 @@ struct Args {
 
     #[clap(long)]
     prove: bool,
-
-    #[clap(long, default_value = "20")]
-    n: u32,
 }
 
 fn main() {
@@ -84,31 +81,48 @@ fn main() {
     // Setup the prover client.
     let client = ProverClient::from_env();
 
+    let (signkey, verifykey) = generate_keys();
+
+    let sig = match sign_message(&signkey, MESSAGE_TO_SIGN) {
+        Some(sig) => sig,
+        None => {
+            eprintln!("Signing error");
+            std::process::exit(1);
+        }
+    };
+
     // Setup the inputs.
     let mut stdin = SP1Stdin::new();
-    stdin.write(&args.n);
-
-    println!("n: {}", args.n);
+    stdin.write_vec(verifykey);
+    stdin.write_vec(sig);
+    stdin.write_vec(MESSAGE_TO_SIGN.to_vec());
 
     if args.execute {
         // // Execute the program
-        // let (output, report) = client.execute(FALCON_ELF, &stdin).run().unwrap();
-        // println!("Program executed successfully.");
+        let (output, report) = client.execute(FALCON_ELF, &stdin).run().unwrap();
+        println!("Program executed successfully.");
 
-        // // Read the output.
-        // let decoded = PublicValuesStruct::abi_decode(output.as_slice(), true).unwrap();
-        // let PublicValuesStruct { n, a, b } = decoded;
-        // println!("n: {}", n);
-        // println!("a: {}", a);
-        // println!("b: {}", b);
+        // Read the output.
+        let decoded = PublicValuesStruct::abi_decode(output.as_slice(), true).unwrap();
+        let PublicValuesStruct {
+            vrfy_key,
+            signature,
+            msg,
+            verified,
+        } = decoded;
+
+        // assert_eq!(verifykey, vrfy_key.to_vec());
+        // assert_eq!(sig, signature.to_vec());
+        // assert_eq!(MESSAGE_TO_SIGN, msg.to_vec());
+        assert!(verified);
 
         // let (expected_a, expected_b) = fibonacci_lib::fibonacci(n);
         // assert_eq!(a, expected_a);
         // assert_eq!(b, expected_b);
         // println!("Values are correct!");
 
-        // // Record the number of cycles executed.
-        // println!("Number of cycles: {}", report.total_instruction_count());
+        // Record the number of cycles executed.
+        println!("Number of cycles: {}", report.total_instruction_count());
     } else {
         // Setup the program for proving.
         let (pk, vk) = client.setup(FALCON_ELF);
