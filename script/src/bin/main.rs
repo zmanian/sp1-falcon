@@ -123,12 +123,15 @@ fn main() {
     } else {
         // Setup the program for proving.
         let (pk, vk) = client.setup(FALCON_ELF);
-
-        // Generate the proof
-        let proof = client
-            .prove(&pk, &stdin)
-            .run()
-            .expect("failed to generate proof");
+        let proof = {
+            let start_time = std::time::Instant::now();
+            let proof = client
+                .prove(&pk, &stdin)
+                .run()
+                .expect("failed to generate proof");
+            println!("Proof generation took {:?}", start_time.elapsed());
+            proof
+        };
 
         println!("Successfully generated proof!");
 
