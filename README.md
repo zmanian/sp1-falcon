@@ -1,6 +1,7 @@
 # Falcon DSA SP1 program
 
-This program is a proof of concept for verifying the Falcon post quantum
+This program is a proof of concept for verifying the Falcon post quantum signature.
+It uses https://github.com/pornin/rust-fn-dsa for the falcon implementation.
 
 
 ## Requirements

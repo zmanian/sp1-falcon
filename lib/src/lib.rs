@@ -1,6 +1,6 @@
 use alloy_sol_types::sol;
 pub use fn_dsa_vrfy::{signature_size, vrfy_key_size};
-use fn_dsa_vrfy::{VerifyingKey, VerifyingKeyStandard, DOMAIN_NONE, FN_DSA_LOGN_512, HASH_ID_RAW};
+use fn_dsa_vrfy::{VerifyingKey, VerifyingKeyStandard, DOMAIN_NONE, HASH_ID_RAW};
 
 sol! {
     /// The public values encoded as a struct that can be easily deserialized inside Solidity.

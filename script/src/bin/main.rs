@@ -111,9 +111,6 @@ fn main() {
             verified,
         } = decoded;
 
-        // assert_eq!(verifykey, vrfy_key.to_vec());
-        // assert_eq!(sig, signature.to_vec());
-        // assert_eq!(MESSAGE_TO_SIGN, msg.to_vec());
         assert!(verified);
 
         // let (expected_a, expected_b) = fibonacci_lib::fibonacci(n);
