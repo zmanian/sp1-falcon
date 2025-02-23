@@ -1,7 +1,7 @@
-# SP1 Project Template
+# Falcon DSA SP1 program
 
-This is a template for creating an end-to-end [SP1](https://github.com/succinctlabs/sp1) project
-that can generate a proof of any RISC-V program.
+This program is a proof of concept for verifying the Falcon post quantum
+
 
 ## Requirements
 
